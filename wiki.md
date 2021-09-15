@@ -61,9 +61,9 @@ Note2: All other combinations are undefined and should be fixed up to one of the
 === Font Packages ===
 
 Fonts packages given that fonts are just data, there's no way for them to trip any of the problems that would cause us to not want to support it. Therefore not all of the process has to be followed for these.
-Unfortunately there were cases where src:font-* packages contained way more than just a font - due to that either the MIR Team (if a MIR bug was filed) or the Ubuntu-Archive team (on promoting it) has to do a spot check that the neither the source nor the created binary packages violate these assumptions.
+Unfortunately there were cases where src:font-* packages contained way more than just a font - due to that either the MIR Team (if a MIR bug was filed) or the Ubuntu-Archive team (on promoting it) has to do a spot check that neither the source nor the created binary packages violate these assumptions.
 
-The one limitation is that the package needs a valid team subscriber - just in case anything might come up later.
+The only limitation is that the package needs a valid team subscriber before being promoted by an archive admin - just in case anything might come up later.
 The MIR Team should try to clarify that with the Team that owns the depending package to own the font as well (read: without the overhead of a full MIR process).
 
 == Filing a MIR bug ==
@@ -79,18 +79,17 @@ The MIR-bug reporter is expected to:
   1. Include the rationale and description of the violations of [[#Main_Inclusion_requirements|Ubuntu Main Inclusion Requirements]], and a confirmation that you checked the requirements carefully.
  1. Subscribe `ubuntu-mir` to the bug report (do not assign it to anyone!), so that it appears in the [[https://bugs.launchpad.net/ubuntu/?field.searchtext=&orderby=-date_last_updated&field.status%3Alist=NEW&assignee_option=none&field.assignee=&field.subscriber=ubuntu-mir|MIR bug list]].
  1. The [[https://launchpad.net/~ubuntu-mir|MIR team]] reviews the reports, and sets acceptable ones to ''In Progress'' or ''Fix Committed''. They might also delegate portions of the review to other teams, by assigning it to them; common cases are getting a thorough security review from the [[https://launchpad.net/~ubuntu-security|security team]] (please see [[SecurityTeam/Auditing|SecurityTeam/Auditing]] for details on requesting an audit and the [[https://trello.com/b/HvFhIQpv/security-team|security team trello board]] (private board; Reviews lane) for prioritized list of MIR security reviews), or getting a sign-off from particular team leads about maintenance commitments.
-  1. In the case where an MIR needs a security review, a normal MIR review will happen by a member of the MIR team and the security review by a member of the security team. Among these team members, whoever does it the last review shall adjust the bug status accordingly. For instance, if MIR team says ok then security says ok, the security team member should mark the bug as Fix Committed (see above for other statuses).
-  1. In case the MIR Team (or later other reviewers) identify tasks that need to be done the bug is set to "incomplete" to reflect that is back on the reporter to drive that forward before more progress can be made. Common Examples are "please add team subscriber", "please add an automated test" or "this needs the new version"
- 1. Add the package to a [[SeedManagement|seed]], or as a (build-)dependency of a package in `main`.  The package will not be moved to main automatically, but will show up in the [[http://people.ubuntu.com/~ubuntu-archive/component-mismatches.txt|component-mismatches]] list, or if the dependency is only in proposed, the [[http://people.canonical.com/~ubuntu-archive/component-mismatches-proposed.txt|component-mismatches-proposed]] list.
+  1. In the case where an MIR needs a security review, a normal MIR review will happen by a member of the MIR team and the security review by a member of the security team. Among these team members, whoever does the last review shall adjust the bug status accordingly. For instance, if MIR team says ok then security says ok, the security team member should mark the bug as Fix Committed (see above for other statuses).
+  1. In case the MIR Team (or later other reviewers) identify tasks that need to be done the bug is set to "incomplete" to reflect that is back on the reporter to drive that forward before more progress can be made. Common Examples are "please add an automated test" or "this needs the new version"
+ 1. Add the package to a [[SeedManagement|seed]], or as a dependency of a package in `main`.  The package will not be moved to main automatically, but will show up in the [[http://people.ubuntu.com/~ubuntu-archive/component-mismatches.txt|component-mismatches]] list, or if the dependency is only in proposed, the [[http://people.canonical.com/~ubuntu-archive/component-mismatches-proposed.txt|component-mismatches-proposed]] list.
  1. Archive administrators will review the component-mismatches output, and for each package waiting to move into `main`, look for a corresponding [[https://bugs.launchpad.net/~ubuntu-mir/+subscribedbugs|bug]].
- 1. The submitter should then take responsibility for adding the package to the seeds as per SeedManagement or adding a dependency to it from another package that already is in `main`.
- 1. The archive administrators will promote approved packages to `main` if some other package or the seeds want it (see [[http://people.ubuntu.com/~ubuntu-archive/component-mismatches.txt|component-mismatches output]]).
+ 1. The archive administrators will promote approved packages to `main` if some other package or the seeds want it (see [[http://people.ubuntu.com/~ubuntu-archive/component-mismatches.txt|component-mismatches output]]) and the package in question has an owning team subscribed to it.
 
 Notes:
 
- * Reports should always be named for SOURCE packages, not binary packages
- * New binary packages from existing source packages, where the source package is already in main, do not require reports.
- * If a new source package contains only code which is already in main (e.g., the result of a source package split or rename, or source packages with a version in the name), it may not need a full review. Submitting a bug with an explanation is sufficient.
+ * MIR bugs should always be named for SOURCE packages, not binary packages
+ * New binary packages from existing source packages, where the source package is already in main, do not require MIR bugs.
+ * If a new source package contains only code which is already in main (e.g. the result of a source package split or rename, or source packages with a version in the name), it may not need a full review. Submitting a MIR bug with an explanation (but without the full template) is sufficient.
 
 
 === MIR bug report template ===
@@ -105,6 +104,8 @@ See below at [[#Main_Inclusion_requirements|Ubuntu Main Inclusion Requirements]]
 [Security]
 
 [Quality assurance]
+
+[UI standards]
 
 [Dependencies]
 
@@ -122,10 +123,23 @@ The package must fulfill the following requirements:
  0. ''Availability:'' The package must already be in the Ubuntu universe, and must build for the architectures it is designed to work on.
  0. ''Rationale:'' There must be a certain level of demand for the package, for example:
   * The package is useful for a large part of our user base.
-  * The package is a new build dependency or dependency of a package that we already support.
-  * The package helps meet a specific Blueprint goal.
+  * The package is a new runtime dependency of a package that we already support (build-dependencies can stay in universe).
+  * The package helps meet a specific Blueprint/Roadmap goal.
   * The package replaces another package we currently support and promises higher quality and/or better features, so that we can drop the old package from the supported set.
- 0. ''Security:'' The security history and the current state of security issues in the package must allow us to support the package for at least 9 months (60 for LTS support) without exposing its users to an inappropriate level of security risks. This requires checking of several things that are explained in detail in the subsection ''Security checks''.
+ 0. ''Security:'' The security history and the current state of security issues in the package must allow us to support the package for at least 9 months (60 for LTS support) without exposing its users to an inappropriate level of security risks. This requires checking of several things:
+  * Check how many vulnerabilities the package had in the past and how they were handled by upstream and the Debian/Ubuntu package:
+   * http://cve.mitre.org/cve/search_cve_list.html: Search in the National Vulnerability Database using the package as a keyword
+   * check OSS security mailing list (feed 'site:www.openwall.com/lists/oss-security <pkgname>' into search engine)
+   * Ubuntu CVE Tracker
+    * http://people.ubuntu.com/~ubuntu-security/cve/main.html
+    * http://people.ubuntu.com/~ubuntu-security/cve/universe.html
+    * http://people.ubuntu.com/~ubuntu-security/cve/partner.html
+  * Check for security relevant binaries. If any are present, this requires a more in-depth security review.
+   * Executables which have the `suid` or `sgid` bit set.
+   * Executables in `/sbin`, `/usr/sbin`.
+   * Packages which install services / daemons (`/etc/init.d/*`, `/etc/init/*`, `/lib/systemd/system/*`)
+   * Packages which open privileged ports (ports < 1024).
+   * Add-ons and plugins to security-sensitive software (filters, scanners, UI skins, etc)
  0. ''Quality assurance:''
   * After installing the package it must be possible to make it working with a reasonable effort of configuration and documentation reading.
   * The package must not ask debconf questions higher than medium if it is going to be installed by default. The debconf questions must have reasonable defaults.
@@ -145,32 +159,16 @@ The package must fulfill the following requirements:
   * All binary dependencies (including `Recommends:`) must be satisfiable in main (i. e. the preferred alternative must be in main). If not, these dependencies need a separate MIR report (this can be a separate bug or another task on the main MIR bug)
  0. ''Standards compliance:'' The package should meet the [[https://refspecs.linuxfoundation.org/fhs.shtml|FHS]] and [[http://www.debian.org/doc/debian-policy/|Debian Policy]] standards. Major violations should be documented and justified. Also, the source packaging should be reasonably easy to understand and maintain.
  0. ''Maintenance:'' The package must have an acceptable level of maintenance corresponding to its complexity:
-  * All packages must have a designated "owning" team, regardless of complexity, which is set as a package bug contact.
+  * All packages must have a designated "owning" team, regardless of complexity, which is set as a package bug contact. This is not a requirement for the MIR team ACK, but for the package to be promoted by an archive admin.
   * Simple packages (e.g. language bindings, simple Perl modules, small command-line programs, etc.) might not need very much maintenance effort, and if they are maintained well in Debian we can just keep them synced
   * More complex packages will usually need a developer or team of developers paying attention to their bugs, whether that be in Ubuntu or elsewhere (often Debian). Packages that deliver major new headline features in Ubuntu need to have commitment from Ubuntu developers willing to spend substantial time on them.
  0. ''Background information:''
   * The package descriptions should explain the general purpose and context of the package. Additional explanations/justifications should be done in the MIR report.
   * If the package was renamed recently, or has a different upstream name, this needs to be explained in the MIR report.
 
- 0. Security checks
-
-  * Check how many vulnerabilities the package had in the past and how they were handled by upstream and the Debian/Ubuntu package:
-   * http://cve.mitre.org/cve/search_cve_list.html: Search in the National Vulnerability Database using the package as a keyword
-   * check OSS security mailing list (feed 'site:www.openwall.com/lists/oss-security <pkgname>' into search engine)
-   * Ubuntu CVE Tracker
-    * http://people.ubuntu.com/~ubuntu-security/cve/main.html
-    * http://people.ubuntu.com/~ubuntu-security/cve/universe.html
-    * http://people.ubuntu.com/~ubuntu-security/cve/partner.html
-  * Check for security relevant binaries. If any are present, this requires a more in-depth security review.
-   * Executables which have the `suid` or `sgid` bit set.
-   * Executables in `/sbin`, `/usr/sbin`.
-   * Packages which install services / daemons (`/etc/init.d/*`, `/etc/init/*`, `/lib/systemd/system/*`)
-   * Packages which open privileged ports (ports < 1024).
-   * Add-ons and plugins to security-sensitive software (filters, scanners, UI skins, etc)
-
 == Reviewing a bug ==
 
-This section is a guideline for the [[https://launchpad.net/~mir-team|MIR Team]].
+This section is a guideline for the [[https://launchpad.net/~ubuntu-mir|MIR Team]].
 The primary decision a reviewer is making is '''"Will this package be well maintained in main?"'''
 
 The following guidelines are just ways to help you answer to that question.
@@ -188,9 +186,9 @@ The following guidelines are just ways to help you answer to that question.
 
    * Evaluating cost/benefits while considering the ABI instability of golang libraries during this period, the MIR team decided for 17.10 and later to allow static builds of golang packages in main, so long as the number of these packages remains low and they follow the guidelines below (under "Packaging red flags/If it's a statically compiled golang package").
 
-   * Specifically, in 17.10+ and higher, golang applications in main are expected:
+   * Specifically, in 17.10 and later, golang applications in main are expected:
     1. to build using `golang-*-dev` packages from the Ubuntu archive with `Built-Using` in debian/control. This requirement ensures that the security team is able to track security issues for all affected static binary packages
-    2. not to build any vendored (ie, embedded) code in the source package whose binaries appear in the archive (e.g. test code is ok) without clear justification from the requesting team and approval from the security team. This requirement ensures that the security team is able to track security issues for all affected source packages.
+    2. not to build any vendored (i.e. embedded) code in the source package whose binaries appear in the archive (e.g. test code is ok) without clear justification from the requesting team and approval from the security team. This requirement ensures that the security team is able to track security issues for all affected source packages.
     3. only build against approved vendored sources (when applicable) and not build against newly added vendored code in subsequent Ubuntu uploads without approval from the security team. This requirement ensures that the security team is able to track security issues for all affected source packages.
 
    * The intended outcomes from the above requirements are for packages in main to standardize on particular versions of `golang-*-dev` packages (when possible) with the requesting team adjusting their packaging as necessary, all teams responsible for golang packages coordinating on transitions and the requesting team occasionally creating new `golang-*-dev` packages as agreed to in the MIR bug (upstreaming to Debian whenever possible). 
@@ -220,7 +218,7 @@ The following guidelines are just ways to help you answer to that question.
 
   * Does it FTBFS currently?
   * Does it have a test suite?  Make sure it's being run and will fail the build upon error.
-  * Does it have a team bug subscriber?
+  * Does it have a team bug subscriber? (This is not a blocker for a MIR team ACK, but needs to be provided before the package can be promoted by an AA)
   * Is the code translatable (if end user visible)?
   * If it's a Python package, does it use dh_python?
   * If it's a Python package going on the desktop CD, will it pull in Python 2?
@@ -229,13 +227,13 @@ The following guidelines are just ways to help you answer to that question.
 
   * Does Ubuntu carry a delta?
    * If it's a library, does it either have a symbols file or use an empty argument to dh_makeshlibs -V?  (pass such a patch on to Debian, but don't block on it).  Note that for C++, see [[DailyRelease/FAQ]] for a method to demangle C++ symbols files.
-   * Does it have a watch file?
+   * Does it have a watch file? (If relevant, e.g. non-native)
    * Is its update history slow or sporadic?
    * Is the current release packaged?
    * Will entering main make it harder for the people currently keeping it up to date?  (i.e. are they only MOTUs?)
    * Lintian warnings
    * Is debian/rules a mess?  Ideally it uses dh7 and overrides to make it as tiny as possible.
-   * Does debian/control use `Built-Using`. This may may indicate static linking which should be discouraged (excepting golang, see below)
+   * Does debian/control use `Built-Using`. This may indicate static linking which should be discouraged (excepting golang, see below)
    * If it's a statically compiled golang package:
     * Does the package use dh-golang (if not, suggest dh-make-golang to create the package)?
     * Does debian/control use `Built-Using: ${misc:Built-Using}` for each non'-dev' binary package (importantly, golang-*-dev packages only ship source files so don't need Built-Using)? 
@@ -246,7 +244,7 @@ The following guidelines are just ways to help you answer to that question.
 
   * Errors/warnings during the build
   * Incautious use of malloc/sprintf
-  * Uses of sudo, gksu, pkexec, or LD_LIBRARY_PATH
+  * Uses of sudo, gksu, pkexec, or LD_LIBRARY_PATH (its OK to be used in tests)
   * User nobody is strictly for NFS's use and must not be used by any running processes on the system.
   * Use of setuid needs very careful design (prefer systemd to set those for services)
   * Important bugs (crashers, etc) in Debian or Ubuntu
@@ -256,7 +254,7 @@ The following guidelines are just ways to help you answer to that question.
 
 === MIR review template ===
 
-MIR members should this template for the MIR review.
+MIR members should use this template for the MIR review.
 
 It helps to not miss any of the details mentioned above by processing them line by line.
 In a perfect world with a perfect package one would only remove ''TODO:'' prefixes and be done.
@@ -319,9 +317,8 @@ TODO: - does have a test suite that runs at build time
 TODO:   - test suite fails will fail the build upon error.
 TODO: - does have a non-trivial test suite that runs as autopkgtest
 TODO: - if special HW does prevent build/autopkgtest is there a test plan, code, log provided?
-TODO: - The package has a team bug subscriber
 TODO: - no translation present, but none needed for this case (user visible)?
-TODO: - not a python/go package, no extra constraints to consider int hat regard
+TODO: - not a python/go package, no extra constraints to consider in that regard
 TODO: - no new python2 dependency
 TODO: - Python package that is using dh_python
 TODO: - Go package that uses dh-golang
@@ -334,7 +331,7 @@ TODO: - Ubuntu does not carry a delta
 TODO: - Ubuntu does carry a delta, but it is reasonable and maintenance under control
 TODO: - symbols tracking is in place
 TODO: - symbols tracking not applicable for this kind of code.
-TODO: - d/watch is present and looks ok
+TODO: - d/watch is present and looks ok (if needed, e.g. non-native)
 TODO: - Upstream update history is (good/slow/sporadic)
 TODO: - Debian/Ubuntu update history is (good/slow/sporadic)
 TODO: - the current release is packaged
@@ -356,6 +353,7 @@ OK:
 TODO: - no Errors/warnings during the build
 TODO: - no incautious use of malloc/sprintf (as far as I can check it)
 TODO: - no use of sudo, gksu, pkexec, or LD_LIBRARY_PATH
+TODO:   (usage is OK inside tests)
 TODO: - no use of user nobody
 TODO: - no use of setuid
 TODO: - no important open bugs (crashers, etc) in Debian or Ubuntu
@@ -429,7 +427,8 @@ of filing a monologue-log every week.
 To help prevent promotion of packages that cause component mismatches, we can do two things:
 
  1. Run `check-mir` and make sure that all dependencies have a MIR.  We don't want to be surprised by a dependency after a package is promoted.
- 1. List all distinct binary packages that should be promoted.  Often a source package will have binary packages that aren't actually needed in main.  Things like `-doc` or `-autopilot`.  These can stay in universe, and it is a kindness to list only the packages we need for the archive team member that does the promotion. 
+ 1. List all distinct binary packages that should be promoted.  Often a source package will have binary packages that aren't actually needed in main.  Things like `-doc`, `-autopilot` or `-dbgsym`.  These can stay in universe, and it is a kindness to list only the packages we need for the archive team member that does the promotion. 
+ 1. Recommend the owning team to add their corresponding team bug subscriber during the MIR process.
 
 === Bug Lists ===
 
