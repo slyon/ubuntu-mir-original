@@ -89,7 +89,7 @@ Notes:
 
  * MIR bugs should always be named for SOURCE packages, not binary packages
  * New binary packages from existing source packages, where the source package is already in main, do not require MIR bugs.
- * If a new source package contains only code which is already in main (e.g. the result of a source package split or rename, or source packages with a version in the name), it may not need a full review. Submitting a MIR bug with an explanation (but without the full template) is sufficient.
+ * If a new source package contains only code which is already in main (e.g. the result of a source package split or rename, or source packages with a version in the name), it may not need a full review. Submitting a MIR bug with an explanation (but without the full template) or updating/extending on the existing old MIR bug and re-opening it by setting it to "NEW" is sufficient.
 
 
 === MIR bug report template ===
@@ -159,7 +159,7 @@ The package must fulfill the following requirements:
   * All binary dependencies (including `Recommends:`) must be satisfiable in main (i. e. the preferred alternative must be in main). If not, these dependencies need a separate MIR report (this can be a separate bug or another task on the main MIR bug)
  0. ''Standards compliance:'' The package should meet the [[https://refspecs.linuxfoundation.org/fhs.shtml|FHS]] and [[http://www.debian.org/doc/debian-policy/|Debian Policy]] standards. Major violations should be documented and justified. Also, the source packaging should be reasonably easy to understand and maintain.
  0. ''Maintenance:'' The package must have an acceptable level of maintenance corresponding to its complexity:
-  * All packages must have a designated "owning" team, regardless of complexity, which is set as a package bug contact. This is not a requirement for the MIR team ACK, but for the package to be promoted by an archive admin.
+  * All packages must have a designated "owning" team, regardless of complexity, which is set as a package bug contact. This is not a requirement for the MIR team ACK, but for the package to be promoted by an archive admin. Still, it is strongly suggested to subscribe, as the owning team will get a preview of the to-be-expected incoming bugs later on (once they are responsible).
   * Simple packages (e.g. language bindings, simple Perl modules, small command-line programs, etc.) might not need very much maintenance effort, and if they are maintained well in Debian we can just keep them synced
   * More complex packages will usually need a developer or team of developers paying attention to their bugs, whether that be in Ubuntu or elsewhere (often Debian). Packages that deliver major new headline features in Ubuntu need to have commitment from Ubuntu developers willing to spend substantial time on them.
  0. ''Background information:''
@@ -275,6 +275,7 @@ TODO: - add todos, issues or special cases to discuss
 Required TODOs:
 TODO - TBD
 Recommended TODOs:
+TODO: - The package has a team bug subscriber
 TODO - TBD
 
 [Duplication]
@@ -352,8 +353,7 @@ TODO: Problems:
 OK:
 TODO: - no Errors/warnings during the build
 TODO: - no incautious use of malloc/sprintf (as far as I can check it)
-TODO: - no use of sudo, gksu, pkexec, or LD_LIBRARY_PATH
-TODO:   (usage is OK inside tests)
+TODO: - no use of sudo, gksu, pkexec, or LD_LIBRARY_PATH (usage is OK inside tests)
 TODO: - no use of user nobody
 TODO: - no use of setuid
 TODO: - no important open bugs (crashers, etc) in Debian or Ubuntu
